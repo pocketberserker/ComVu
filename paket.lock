@@ -1,0 +1,64 @@
+NUGET
+  remote: http://api.nuget.org/v3/index.json
+    AvalonEdit (5.0.3)
+    FSharp.Compiler.Service (5.0)
+    Microsoft.Bcl (1.1.10) - framework: net40, wpv8.0
+      Microsoft.Bcl.Build (>= 1.0.14)
+    Microsoft.Bcl.Async (1.0.168) - framework: net40, wpv8.0
+      Microsoft.Bcl (>= 1.1.8)
+    Microsoft.Bcl.Build (1.0.21) - import_targets: false, framework: net40, wpv8.0
+    Microsoft.Xaml.Behaviors.Uwp.Managed (1.1) - framework: net10, net11, net20, net30, net35
+    ReactiveProperty (2.8)
+      Microsoft.Bcl (>= 1.1.10) - framework: net40, wpv8.0
+      Microsoft.Bcl.Async (>= 1.0.168) - framework: net40, wpv8.0
+      Microsoft.Xaml.Behaviors.Uwp.Managed (>= 1.1) - framework: net10, net11, net20, net30, net35
+      Rx-Main (>= 2.2.5)
+    Rx-Core (2.2.5)
+      Rx-Interfaces (>= 2.2.5)
+    Rx-Interfaces (2.2.5)
+    Rx-Linq (2.2.5)
+      Rx-Core (>= 2.2.5)
+      Rx-Interfaces (>= 2.2.5)
+    Rx-Main (2.2.5)
+      Rx-Core (>= 2.2.5)
+      Rx-Interfaces (>= 2.2.5)
+      Rx-Linq (>= 2.2.5)
+      Rx-PlatformServices (>= 2.2.5)
+    Rx-PlatformServices (2.3)
+      Rx-Core (>= 2.2)
+      Rx-Interfaces (>= 2.2)
+GITHUB
+  remote: icsharpcode/SharpDevelop
+    src/AddIns/BackendBindings/FSharpBinding/Resources/FS-Mode.xshd (f75c8398e9011777981dc97c5da05f9f531b97b0)
+GROUP Build
+NUGET
+  remote: http://api.nuget.org/v3/index.json
+    FAKE (4.29.2)
+    FAKE.Lib (4.29.2)
+    FAKE.Persimmon (1.0.4)
+      FAKE.Lib (>= 4.1)
+      Persimmon.Console (>= 1.0.2)
+    Microsoft.Bcl (1.1.10) - framework: net10, net11, net20, net30, net35, net40, net40-full
+      Microsoft.Bcl.Build (>= 1.0.14)
+    Microsoft.Bcl.Build (1.0.21) - import_targets: false, framework: net10, net11, net20, net30, net35, net40, net40-full
+    Microsoft.Net.Http (2.2.29) - framework: net10, net11, net20, net30, net35, net40, net40-full
+      Microsoft.Bcl (>= 1.1.10)
+      Microsoft.Bcl.Build (>= 1.0.14)
+    Octokit (0.20)
+      Microsoft.Net.Http  - framework: net10, net11, net20, net30, net35, net40, net40-full
+    Persimmon.Console (1.1)
+    SourceLink.Fake (1.1)
+GITHUB
+  remote: fsharp/FAKE
+    modules/Octokit/Octokit.fsx (c56456abac6b744c3bb95b217687db19fd19b367)
+      Octokit
+GROUP Test
+NUGET
+  remote: http://api.nuget.org/v3/index.json
+    Diff.Match.Patch (1.1)
+    FSharp.Object.Diff (0.8)
+    Persimmon (1.1)
+    Persimmon.MuscleAssert (0.6)
+      Diff.Match.Patch (>= 1.1)
+      FSharp.Object.Diff (>= 0.6.1)
+      Persimmon (>= 1.1)

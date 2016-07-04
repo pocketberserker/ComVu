@@ -1,0 +1,21 @@
+type file
+id ComVu
+owners
+    pocketberserker
+authors
+    pocketberserker
+projectUrl
+    https://github.com/pocketberserker/ComVu
+licenseUrl
+    https://github.com/pocketberserker/ComVu/blob/master/LICENSE
+requireLicenseAcceptance
+    false
+tags
+    F#, computation expressions
+description
+    Computation Expression Analyzer.
+files
+    bin/Release/*.exe ==> tools
+    bin/Release/*.config ==> tools
+    bin/Release/*.dll ==> tools
+    !bin/Release/*.XML

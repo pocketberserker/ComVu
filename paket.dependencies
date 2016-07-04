@@ -1,0 +1,23 @@
+source https://api.nuget.org/v3/index.json
+
+nuget ReactiveProperty
+nuget AvalonEdit
+nuget FSharp.Compiler.Service
+
+github icsharpcode/SharpDevelop src/AddIns/BackendBindings/FSharpBinding/Resources/FS-Mode.xshd
+
+group Build
+  source https://api.nuget.org/v3/index.json
+
+  nuget FAKE
+  nuget SourceLink.Fake
+  nuget FAKE.Persimmon
+
+  github fsharp/FAKE modules/Octokit/Octokit.fsx
+
+group Test
+  source https://api.nuget.org/v3/index.json
+
+  nuget Persimmon
+  nuget Persimmon.MuscleAssert
+
