@@ -1,6 +1,8 @@
 source https://api.nuget.org/v3/index.json
 
+nuget FSharp.Core
 nuget ReactiveProperty
+nuget Rx-PlatformServices = 2.2.5
 nuget AvalonEdit
 nuget FSharp.Compiler.Service
 

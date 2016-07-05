@@ -52,6 +52,11 @@ Target "AssemblyInfo" (fun _ ->
     |> CreateFSharpAssemblyInfo "./src/ComVu.Core/AssemblyInfo.fs"
 
     [
+      Attribute.Title "ComVu.ViewModels"
+    ] @ common
+    |> CreateFSharpAssemblyInfo "./src/ComVu.ViewModels/AssemblyInfo.fs"
+
+    [
       Attribute.Title "ComVu"
     ] @ common
     |> CreateCSharpAssemblyInfo "./src/ComVu/Properties/AssemblyInfo.cs"

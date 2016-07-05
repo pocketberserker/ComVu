@@ -2,6 +2,7 @@ NUGET
   remote: http://api.nuget.org/v3/index.json
     AvalonEdit (5.0.3)
     FSharp.Compiler.Service (5.0)
+    FSharp.Core (4.0.0.1)
     Microsoft.Bcl (1.1.10) - framework: net40, wpv8.0
       Microsoft.Bcl.Build (>= 1.0.14)
     Microsoft.Bcl.Async (1.0.168) - framework: net40, wpv8.0
@@ -24,9 +25,9 @@ NUGET
       Rx-Interfaces (>= 2.2.5)
       Rx-Linq (>= 2.2.5)
       Rx-PlatformServices (>= 2.2.5)
-    Rx-PlatformServices (2.3)
-      Rx-Core (>= 2.2)
-      Rx-Interfaces (>= 2.2)
+    Rx-PlatformServices (2.2.5)
+      Rx-Core (>= 2.2.5)
+      Rx-Interfaces (>= 2.2.5)
 GITHUB
   remote: icsharpcode/SharpDevelop
     src/AddIns/BackendBindings/FSharpBinding/Resources/FS-Mode.xshd (f75c8398e9011777981dc97c5da05f9f531b97b0)
