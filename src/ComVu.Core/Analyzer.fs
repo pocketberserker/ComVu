@@ -14,11 +14,35 @@ let private displayArgs (args: FSharpMemberOrFunctionOrValue) =
   if args.DisplayName = "unitVar" then "()"
   else args.DisplayName
 
+let private optimizeBindLambda = function
+| Lambda(_, Let(name, _, body)) -> Success(Lambda(name, body))
+| expr -> Failure ["failed to optimize Bind lambda term."; sprintf "%O" expr ]
+
 let rec private analysisBody instance = function
-| BasicPatterns.Const(v, _) -> Success(Const(v.ToString()))
+| BasicPatterns.Const(v, t) ->
+  match v with
+  | null ->
+    let name = t.TypeDefinition.CompiledName
+    if name = "unit" then "()"
+    else "null"
+  | _ -> v.ToString()
+  |> Const
+  |> Success
+| BasicPatterns.Value(memberOrFunctionOrValue) -> Success(Value memberOrFunctionOrValue.CompiledName)
+| BasicPatterns.NewObject(_, _, args) ->
+  List.foldBack (fun x rs ->
+    AnalysisResult.bind (fun rs -> analysisBody instance x |> AnalysisResult.map (fun r -> r::rs)) rs
+  ) args (Success [])
+  |> AnalysisResult.map NewObject
 | BasicPatterns.Lambda(args, expr) ->
   analysisBody instance expr
   |> AnalysisResult.map (fun body -> Lambda(displayArgs args, body))
+| BasicPatterns.Let((name, value), body) ->
+  result {
+    let! value = analysisBody instance value
+    let! body = analysisBody instance body
+    return Let(name.CompiledName, value, body)
+  }
 | BasicPatterns.Call(BuilderInstance instance, member', _, _, exprs) ->
   match (member'.CompiledName, exprs) with
   | ("Return", [expr]) ->
@@ -29,10 +53,24 @@ let rec private analysisBody instance = function
     |> AnalysisResult.bind (fun value -> Success(Yield(instance.CompiledName, value)))
   | ("ReturnFrom", [expr]) ->
     analysisBody instance expr
-    |> AnalysisResult.bind (fun value -> Success(ReturnFrom(instance.CompiledName, value)))
+    |> AnalysisResult.bind (fun value -> Success(ReturnBang(instance.CompiledName, value)))
   | ("YieldFrom", [expr]) ->
     analysisBody instance expr
-    |> AnalysisResult.bind (fun value -> Success(YieldFrom(instance.CompiledName, value)))
+    |> AnalysisResult.bind (fun value -> Success(YieldBang(instance.CompiledName, value)))
+  | ("Bind", [src; lambda]) ->
+    result {
+      let! src = analysisBody instance src
+      let! lambda = analysisBody instance lambda
+      let! lambda = optimizeBindLambda lambda
+      return LetBang(instance.CompiledName, src, lambda)
+    }
+  | ("Using", [src; lambda]) ->
+    result {
+      let! src = analysisBody instance src
+      let! lambda = analysisBody instance lambda
+      let! lambda = optimizeBindLambda lambda
+      return Use(instance.CompiledName, src, lambda)
+    }
   | ("Delay", [expr]) ->
     analysisBody instance expr
     |> AnalysisResult.bind (fun value -> Success(Delay(instance.CompiledName, value)))
@@ -40,6 +78,18 @@ let rec private analysisBody instance = function
     analysisBody instance expr
     |> AnalysisResult.bind (fun value -> Success(Run(instance.CompiledName, value)))
   | _ -> Failure [ sprintf "not supported: %s" member'.CompiledName ]
+| BasicPatterns.Call(receiver, member', _, _, args) ->
+  result {
+    let! receiver =
+      match receiver with
+      | None -> Success None
+      | Some r -> analysisBody instance r |> AnalysisResult.map Some
+    let! args =
+      List.foldBack (fun x rs ->
+        AnalysisResult.bind (fun rs -> analysisBody instance x |> AnalysisResult.map (fun r -> r::rs)) rs
+      ) args (Success [])
+    return ExpressionCall(receiver, member'.DisplayName, args)
+  }
 | BasicPatterns.Quote(expr) ->
   analysisBody instance expr |> AnalysisResult.map Quote
 | expr -> Failure [ sprintf "not supported: %A" expr ]

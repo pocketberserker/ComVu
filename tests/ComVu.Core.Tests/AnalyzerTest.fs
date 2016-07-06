@@ -36,7 +36,7 @@ test {
   }
   (source, expected)
 
-let returnFrom =
+let returnBang =
   let source = """type TestBuilder() =
   member __.ReturnFrom(x) = x
 
@@ -48,11 +48,11 @@ test {
   let expected = {
     Instance = "test"
     Arg = "builder@"
-    Body = ReturnFrom("builder@", Const "0")
+    Body = ReturnBang("builder@", Const "0")
   }
   (source, expected)
 
-let yieldFrom =
+let yieldBang =
   let source = """type TestBuilder() =
   member __.YieldFrom(x) = x
 
@@ -64,7 +64,115 @@ test {
   let expected = {
     Instance = "test"
     Arg = "builder@"
-    Body = YieldFrom("builder@", Const "0")
+    Body = YieldBang("builder@", Const "0")
+  }
+  (source, expected)
+
+let letBang =
+  let source = """type TestBuilder() =
+  member __.Return(x) = x
+  member __.Bind(x, f) = f x
+
+let test = TestBuilder()
+
+test {
+  let! x = 0
+  return x + 1
+}"""
+  let expected = {
+    Instance = "test"
+    Arg = "builder@"
+    Body =
+      LetBang(
+        "builder@",
+        Const "0",
+        Lambda(
+          "x",
+          Return(
+            "builder@",
+            ExpressionCall(None, "( + )", [Value "x"; Const "1"])
+          )
+        )
+      )
+  }
+  (source, expected)
+
+let disposable = """open System
+
+type Disposable() =
+  interface IDisposable with
+    member this.Dispose() = ()
+"""
+
+let useReturn =
+  let source = disposable + """
+type TestBuilder() =
+  member __.Return(x) = x
+  member this.Using(x: #IDisposable, f) =
+    try f x
+    finally match box x with null -> () | notNull -> x.Dispose()
+
+let test = TestBuilder()
+
+test {
+  use x = new Disposable()
+  return 0
+}"""
+  let expected = {
+    Instance = "test"
+    Arg = "builder@"
+    Body =
+      Use(
+        "builder@",
+        NewObject([Const "()"]),
+        Lambda(
+          "x",
+          Return(
+            "builder@",
+             Const "0"
+          )
+        )
+      )
+  }
+  (source, expected)
+
+let useBang =
+  let source = disposable + """
+type TestBuilder() =
+  member __.Return(x) = x
+  member this.Using(x: #IDisposable, f) =
+    try f x
+    finally match box x with null -> () | notNull -> x.Dispose()
+  member __.Bind(x, f) = f x
+
+let test = TestBuilder()
+
+test {
+  use! x = new Disposable()
+  return 0
+}"""
+  let expected = {
+    Instance = "test"
+    Arg = "builder@"
+    Body =
+      LetBang(
+        "builder@",
+        NewObject([Const "()"]),
+        Lambda(
+          "x",
+          Use(
+            "builder@",
+            Value "x",
+            Lambda(
+              "x",
+              Return(
+                "builder@",
+                 Const "0"
+              )
+            )
+          )
+        )
+      )
   }
   (source, expected)
 
@@ -107,8 +215,11 @@ let ``analysis computation expression`` = parameterize {
   source [
     returnOnly
     yieldOnly
-    returnFrom
-    yieldFrom
+    returnBang
+    yieldBang
+    letBang
+    useReturn
+    useBang
     quote
     delayRun
   ]
