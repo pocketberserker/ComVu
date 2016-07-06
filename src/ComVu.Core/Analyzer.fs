@@ -71,6 +71,12 @@ let rec private analysisBody instance = function
       let! lambda = optimizeBindLambda lambda
       return Use(instance.CompiledName, src, lambda)
     }
+  | ("While", [cond; body]) ->
+    result {
+      let! cond = analysisBody instance cond
+      let! body = analysisBody instance body
+      return While(instance.CompiledName, cond, body)
+    }
   | ("Delay", [expr]) ->
     analysisBody instance expr
     |> AnalysisResult.bind (fun value -> Success(Delay(instance.CompiledName, value)))

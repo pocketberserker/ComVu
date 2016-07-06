@@ -176,6 +176,43 @@ test {
   }
   (source, expected)
 
+let whileReturn =
+  let source = """type TestBuilder() =
+  member __.While(cond, f) = if cond () then f () else Unchecked.defaultof<_>
+  member __.Return(x) = x
+  member __.Delay(f) = f
+  member __.Run(f) = f ()
+
+let test = TestBuilder()
+
+test {
+  while true do
+    return 0
+}"""
+  let expected = {
+    Instance = "test"
+    Arg = "builder@"
+    Body =
+      Run(
+        "builder@",
+        Delay(
+          "builder@",
+          Lambda(
+            "()",
+            While(
+              "builder@",
+              Lambda("()", Const "True"),
+              Delay(
+                "builder@",
+                Lambda("()", Return("builder@", Const "0"))
+              )
+            )
+          )
+        )
+      )
+  }
+  (source, expected)
+
 let quote =
   let source = """type TestBuilder() =
   member __.Quote() = ()
@@ -193,24 +230,6 @@ test {
   }
   (source, expected)
 
-let delayRun =
-  let source = """type TestBuilder() =
-  member __.Delay(f) = f
-  member __.Return(x) = x
-  member __.Run(f) = f ()
-
-let test = TestBuilder()
-
-test {
-  return 0
-}"""
-  let expected = {
-    Instance = "test"
-    Arg = "builder@"
-    Body = Run("builder@", Delay("builder@", Lambda("()", Return("builder@", Const "0"))))
-  }
-  (source, expected)
-
 let ``analysis computation expression`` = parameterize {
   source [
     returnOnly
@@ -220,8 +239,8 @@ let ``analysis computation expression`` = parameterize {
     letBang
     useReturn
     useBang
+    whileReturn
     quote
-    delayRun
   ]
   run (fun (source, expected) -> test {
     let! actual = asyncRun { it (Analyzer.analysis source) }
