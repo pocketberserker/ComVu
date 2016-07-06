@@ -47,16 +47,16 @@ let rec private analysisBody instance = function
   match (member'.CompiledName, exprs) with
   | ("Return", [expr]) ->
     analysisBody instance expr
-    |> AnalysisResult.bind (fun value -> Success(Return(instance.CompiledName, value)))
+    |> AnalysisResult.map (fun value -> Return(instance.CompiledName, value))
   | ("Yield", [expr]) ->
     analysisBody instance expr
-    |> AnalysisResult.bind (fun value -> Success(Yield(instance.CompiledName, value)))
+    |> AnalysisResult.map (fun value -> Yield(instance.CompiledName, value))
   | ("ReturnFrom", [expr]) ->
     analysisBody instance expr
-    |> AnalysisResult.bind (fun value -> Success(ReturnBang(instance.CompiledName, value)))
+    |> AnalysisResult.map (fun value -> ReturnBang(instance.CompiledName, value))
   | ("YieldFrom", [expr]) ->
     analysisBody instance expr
-    |> AnalysisResult.bind (fun value -> Success(YieldBang(instance.CompiledName, value)))
+    |> AnalysisResult.map (fun value -> YieldBang(instance.CompiledName, value))
   | ("Bind", [src; lambda]) ->
     result {
       let! src = analysisBody instance src
@@ -86,10 +86,10 @@ let rec private analysisBody instance = function
     }
   | ("Delay", [expr]) ->
     analysisBody instance expr
-    |> AnalysisResult.bind (fun value -> Success(Delay(instance.CompiledName, value)))
+    |> AnalysisResult.map (fun value -> Delay(instance.CompiledName, value))
   | ("Run", [expr]) ->
     analysisBody instance expr
-    |> AnalysisResult.bind (fun value -> Success(Run(instance.CompiledName, value)))
+    |> AnalysisResult.map (fun value -> Run(instance.CompiledName, value))
   | _ -> Failure [ sprintf "not supported: %s" member'.CompiledName ]
 | BasicPatterns.Call(receiver, member', _, _, args) ->
   result {
