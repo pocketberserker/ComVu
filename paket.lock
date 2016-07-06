@@ -28,6 +28,7 @@ NUGET
     Rx-PlatformServices (2.2.5)
       Rx-Core (>= 2.2.5)
       Rx-Interfaces (>= 2.2.5)
+    YC.PrettyPrinter (0.0.4)
 GITHUB
   remote: icsharpcode/SharpDevelop
     src/AddIns/BackendBindings/FSharpBinding/Resources/FS-Mode.xshd (f75c8398e9011777981dc97c5da05f9f531b97b0)

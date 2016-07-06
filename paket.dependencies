@@ -5,6 +5,7 @@ nuget ReactiveProperty
 nuget Rx-PlatformServices = 2.2.5
 nuget AvalonEdit
 nuget FSharp.Compiler.Service
+nuget YC.PrettyPrinter
 
 github icsharpcode/SharpDevelop src/AddIns/BackendBindings/FSharpBinding/Resources/FS-Mode.xshd
 
