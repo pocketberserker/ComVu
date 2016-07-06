@@ -32,7 +32,7 @@ type ComputationExpression = {
 }
 with
   override this.ToString() =
-    [ sprintf "fun %s ->" this.Arg; this.Body.ToString() ]
+    [ sprintf "(fun %s ->" this.Arg; this.Body.ToString(); sprintf ") %s" this.Instance ]
     |> String.concat Environment.NewLine
 
 type AnalysisResult<'T> =
