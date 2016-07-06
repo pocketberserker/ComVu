@@ -25,6 +25,7 @@ type ComputationExpressionBody =
   | LetBang of string * ComputationExpressionBody * ComputationExpressionBody
   | Use of string * ComputationExpressionBody * ComputationExpressionBody
   | While of string * ComputationExpressionBody * ComputationExpressionBody
+  | For of string * ComputationExpressionBody * ComputationExpressionBody
   | Quote of ComputationExpressionBody
   | Delay of string * ComputationExpressionBody
   | Run of string * ComputationExpressionBody
@@ -55,6 +56,8 @@ with
       wordL instance ^^ wordL ".Using" ^^ methodArgs [src.Doc; lambda.Doc]
     | While(instance, cond, body) ->
       wordL instance ^^ wordL ".While" ^^ methodArgs [cond.Doc; body.Doc]
+    | For(instance, src, lambda) ->
+      wordL instance ^^ wordL ".For" ^^ methodArgs [src.Doc; lambda.Doc]
     | Quote(expr) -> wordL "<@" -- expr.Doc @@ wordL "@>"
     | Delay(instance, expr) -> wordL instance ^^ wordL ".Delay" ^^ methodArgs [expr.Doc]
     | Run(instance, expr) -> wordL instance ^^ wordL ".Run" ^^ methodArgs [expr.Doc]

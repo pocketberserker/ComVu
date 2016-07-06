@@ -213,6 +213,35 @@ test {
   }
   (source, expected)
 
+let forReturn =
+  let source = """type TestBuilder() =
+  member __.Return(x) = x
+  member __.For(x, f) = f x
+
+let test = TestBuilder()
+
+test {
+  for x in 0 do
+    return 0
+}"""
+  let expected = {
+    Instance = "test"
+    Arg = "builder@"
+    Body =
+      For(
+        "builder@",
+        Const "0",
+        Lambda(
+          "x",
+          Return(
+            "builder@",
+            Const "0"
+          )
+        )
+      )
+  }
+  (source, expected)
+
 let quote =
   let source = """type TestBuilder() =
   member __.Quote() = ()
@@ -240,6 +269,7 @@ let ``analysis computation expression`` = parameterize {
     useReturn
     useBang
     whileReturn
+    forReturn
     quote
   ]
   run (fun (source, expected) -> test {

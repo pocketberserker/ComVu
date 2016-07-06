@@ -14,7 +14,7 @@ let private displayArgs (args: FSharpMemberOrFunctionOrValue) =
   if args.DisplayName = "unitVar" then "()"
   else args.DisplayName
 
-let private optimizeBindLambda = function
+let private optimizeBindLambdaArg = function
 | Lambda(_, Let(name, _, body)) -> Success(Lambda(name, body))
 | expr -> Failure ["failed to optimize Bind lambda term."; sprintf "%O" expr ]
 
@@ -61,14 +61,14 @@ let rec private analysisBody instance = function
     result {
       let! src = analysisBody instance src
       let! lambda = analysisBody instance lambda
-      let! lambda = optimizeBindLambda lambda
+      let! lambda = optimizeBindLambdaArg lambda
       return LetBang(instance.CompiledName, src, lambda)
     }
   | ("Using", [src; lambda]) ->
     result {
       let! src = analysisBody instance src
       let! lambda = analysisBody instance lambda
-      let! lambda = optimizeBindLambda lambda
+      let! lambda = optimizeBindLambdaArg lambda
       return Use(instance.CompiledName, src, lambda)
     }
   | ("While", [cond; body]) ->
@@ -76,6 +76,13 @@ let rec private analysisBody instance = function
       let! cond = analysisBody instance cond
       let! body = analysisBody instance body
       return While(instance.CompiledName, cond, body)
+    }
+  | ("For", [src; lambda]) ->
+    result {
+      let! src = analysisBody instance src
+      let! lambda = analysisBody instance lambda
+      let! lambda = optimizeBindLambdaArg lambda
+      return For(instance.CompiledName, src, lambda)
     }
   | ("Delay", [expr]) ->
     analysisBody instance expr
