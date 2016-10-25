@@ -8,7 +8,7 @@ This tool can analysis your computation expressions.
 ## Features
 
 - Conversion rule
-  - [ ] ``let p = e in ce``
+  - [x] ``let p = e in ce``
   - [x] ``let! p = e in ce``
   - [x] ``yield e``
   - [x] ``yield! e``

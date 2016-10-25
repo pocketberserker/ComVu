@@ -83,6 +83,31 @@ test {
   }
   (source, expected)
 
+let letReturn =
+  let source = """type TestBuilder() =
+  member __.Return(x) = x
+
+let test = TestBuilder()
+
+test {
+  let x = 0
+  return x + 1
+}"""
+  let expected = {
+    Instance = "test"
+    Arg = "builder@"
+    Body =
+      Let(
+        "x",
+        Const "0",
+        Return(
+          "builder@",
+          ExpressionCall(None, "( + )", [Value "x"; Const "1"])
+        )
+      )
+  }
+  (source, expected)
+
 let letBang =
   let source = """type TestBuilder() =
   member __.Return(x) = x
@@ -425,6 +450,7 @@ let ``analysis computation expression`` = parameterize {
     yieldOnly
     returnBang
     yieldBang
+    letReturn
     letBang
     useReturn
     useBang
