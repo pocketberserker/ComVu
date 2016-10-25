@@ -393,6 +393,42 @@ test {
   }
   (source, expected)
 
+let sequential =
+  let source = """type TestBuilder() =
+  member __.Yield(x) = x
+  member __.Combine(x, y) = y
+  member __.Delay(f) = f ()
+
+let test = TestBuilder()
+
+test {
+  yield 0
+  yield 1
+}"""
+  let expected = {
+    Instance = "test"
+    Arg = "builder@"
+    Body =
+      Delay(
+        "builder@",
+        Lambda(
+          "()",
+          Combine(
+            "builder@",
+            Yield("builder@", Const "0"),
+            Delay(
+              "builder@",
+              Lambda(
+                "()",
+                Yield("builder@", Const "1")
+              )
+            )
+          )
+        )
+      )
+  }
+  (source, expected)
+
 let defineSource =
   let source = """type TestBuilder() =
   member __.ReturnFrom(x) = x
@@ -483,6 +519,7 @@ let ``analysis computation expression`` = parameterize {
     forReturn
     tryWith
     tryFinally
+    sequential
     defineSource
     quote
     externalLibrary

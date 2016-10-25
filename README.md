@@ -24,7 +24,7 @@ This tool can analysis your computation expressions.
   - [x] ``for x in e do ce``
   - [x] ``do e in ce``
   - [x] ``do! e in ce``
-  - [ ] ``ce1; ce2``
+  - [x] ``ce1; ce2``
   - [x] ``do! e;``
   - [x] ``e;``
 - [ ] Sequence expression like seq computation expression

@@ -29,6 +29,7 @@ type ComputationExpressionBody =
   | For of string * ComputationExpressionBody * ComputationExpressionBody
   | TryWith of string * ComputationExpressionBody * ComputationExpressionBody
   | TryFinally of string * ComputationExpressionBody * ComputationExpressionBody
+  | Combine of string * ComputationExpressionBody * ComputationExpressionBody
   | Sequential of ComputationExpressionBody * ComputationExpressionBody
   | Quote of ComputationExpressionBody
   | Source of string * ComputationExpressionBody
@@ -68,6 +69,8 @@ with
       wordL instance ^^ wordL ".TryWith" ^^ methodArgs [src.Doc; rescue.Doc]
     | TryFinally(instance, src, expr) ->
       wordL instance ^^ wordL ".TryFinally" ^^ methodArgs [src.Doc; expr.Doc]
+    | Combine(instance, expr1, expr2) ->
+      wordL instance ^^ wordL ".Combine" ^^ methodArgs [expr1.Doc; expr2.Doc]
     | Sequential(expr1, expr2) -> expr1.Doc ^^ wordL ";" @@ expr2.Doc
     | Quote(expr) -> wordL "<@" -- expr.Doc @@ wordL "@>"
     | Source(instance, expr) -> wordL instance ^^ wordL ".Source" ^^ methodArgs [expr.Doc]

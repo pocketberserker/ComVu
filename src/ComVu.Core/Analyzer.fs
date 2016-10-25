@@ -98,6 +98,12 @@ let rec private analysisBody instance = function
       let! lambda = analysisBody instance lambda
       return TryFinally(instance.CompiledName, src, lambda)
     }
+  | ("Combine", [expr1; expr2]) ->
+    result {
+      let! expr1 = analysisBody instance expr1
+      let! expr2 = analysisBody instance expr2
+      return Combine(instance.CompiledName, expr1, expr2)
+    }
   | ("Source", [expr]) ->
     analysisBody instance expr
     |> AnalysisResult.map (fun value -> Source(instance.CompiledName, value))
