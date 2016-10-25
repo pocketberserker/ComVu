@@ -302,6 +302,48 @@ test {
   }
   (source, expected)
 
+let tryFinally =
+  let source = """type TestBuilder() =
+  member __.Return(x) = x
+  member __.TryFinally(x, g) =
+    try
+      x
+    finally
+      g ()
+  member __.Delay(f) = f ()
+
+let test = TestBuilder()
+
+test {
+  try
+    return 0
+  finally
+    ()
+}"""
+  let expected = {
+    Instance = "test"
+    Arg = "builder@"
+    Body =
+      Delay(
+        "builder@",
+        Lambda(
+          "()",
+          TryFinally(
+            "builder@",
+            Delay(
+              "builder@",
+              Lambda("()", Return("builder@", Const "0"))
+            ),
+            Lambda(
+              "()",
+              Const "()"
+            )
+          )
+        )
+      )
+  }
+  (source, expected)
+
 let quote =
   let source = """type TestBuilder() =
   member __.Quote() = ()
@@ -372,6 +414,7 @@ let ``analysis computation expression`` = parameterize {
     whileReturn
     forReturn
     tryWith
+    tryFinally
     quote
     externalLibrary
   ]
