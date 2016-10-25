@@ -17,6 +17,7 @@ type ComputationExpressionBody =
   | NewObject of ComputationExpressionBody list
   | Return of string * ComputationExpressionBody
   | Yield of string * ComputationExpressionBody
+  | Zero of string
   | ReturnBang of string * ComputationExpressionBody
   | YieldBang of  string * ComputationExpressionBody
   | Lambda of string * ComputationExpressionBody
@@ -26,6 +27,7 @@ type ComputationExpressionBody =
   | Use of string * ComputationExpressionBody * ComputationExpressionBody
   | While of string * ComputationExpressionBody * ComputationExpressionBody
   | For of string * ComputationExpressionBody * ComputationExpressionBody
+  | Sequential of ComputationExpressionBody * ComputationExpressionBody
   | Quote of ComputationExpressionBody
   | Delay of string * ComputationExpressionBody
   | Run of string * ComputationExpressionBody
@@ -40,6 +42,7 @@ with
         |> List.map (fun x -> x.ToString())
       if List.isEmpty args || args = ["()"] then bracketL emptyL
       else args |> List.map wordL |> tupleL
+    | Zero instance -> wordL instance ^^ wordL ".Zero()"
     | Return(instance, arg) -> wordL instance ^^ wordL ".Return" ^^ methodArgs [arg.Doc]
     | ReturnBang(instance, arg) -> wordL instance ^^ wordL ".ReturnFrom" ^^ methodArgs [arg.Doc]
     | Yield(instance, arg) -> wordL instance ^^ wordL ".Yield" ^^ methodArgs [arg.Doc]
@@ -58,6 +61,7 @@ with
       wordL instance ^^ wordL ".While" ^^ methodArgs [cond.Doc; body.Doc]
     | For(instance, src, lambda) ->
       wordL instance ^^ wordL ".For" ^^ methodArgs [src.Doc; lambda.Doc]
+    | Sequential(expr1, expr2) -> expr1.Doc ^^ wordL ";" @@ expr2.Doc
     | Quote(expr) -> wordL "<@" -- expr.Doc @@ wordL "@>"
     | Delay(instance, expr) -> wordL instance ^^ wordL ".Delay" ^^ methodArgs [expr.Doc]
     | Run(instance, expr) -> wordL instance ^^ wordL ".Run" ^^ methodArgs [expr.Doc]

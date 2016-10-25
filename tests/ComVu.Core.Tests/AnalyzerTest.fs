@@ -5,6 +5,20 @@ open Persimmon
 open UseTestNameByReflection
 open ComVu
 
+let zeroOnly =
+  let source = """type TestBuilder() =
+  member __.Zero() = 0
+
+let test = TestBuilder()
+
+test { () }"""
+  let expected = {
+    Instance = "test"
+    Arg = "builder@"
+    Body = Sequential(Const "()", Zero "builder@")
+  }
+  (source, expected)
+
 let returnOnly =
   let source = """type TestBuilder() =
   member __.Return(x) = x
@@ -302,6 +316,7 @@ test {
 
 let ``analysis computation expression`` = parameterize {
   source [
+    zeroOnly
     returnOnly
     yieldOnly
     returnBang

@@ -45,6 +45,7 @@ let rec private analysisBody instance = function
   }
 | BasicPatterns.Call(BuilderInstance instance, member', _, _, exprs) ->
   match (member'.CompiledName, exprs) with
+  | ("Zero", [_]) -> Success(Zero instance.CompiledName)
   | ("Return", [expr]) ->
     analysisBody instance expr
     |> AnalysisResult.map (fun value -> Return(instance.CompiledName, value))
@@ -102,6 +103,12 @@ let rec private analysisBody instance = function
         AnalysisResult.bind (fun rs -> analysisBody instance x |> AnalysisResult.map (fun r -> r::rs)) rs
       ) args (Success [])
     return ExpressionCall(receiver, member'.DisplayName, args)
+  }
+| BasicPatterns.Sequential(expr1, expr2) ->
+  result {
+    let! expr1 = analysisBody instance expr1
+    let! expr2 = analysisBody instance expr2
+    return Sequential(expr1, expr2)
   }
 | BasicPatterns.Quote(expr) ->
   analysisBody instance expr |> AnalysisResult.map Quote
