@@ -15,6 +15,9 @@ type ComputationExpressionBody =
   | Const of string
   | Value of string
   | NewObject of ComputationExpressionBody list
+  | NewArray of ComputationExpressionBody list
+  | NewTuple of ComputationExpressionBody list
+  | NewUnionCase of string * ComputationExpressionBody list
   | Return of string * ComputationExpressionBody
   | Yield of string * ComputationExpressionBody
   | Zero of string
@@ -47,6 +50,20 @@ with
         |> List.map (fun x -> x.ToString())
       if List.isEmpty args || args = ["()"] then bracketL emptyL
       else args |> List.map wordL |> tupleL
+    | NewArray values ->
+      values
+      |> List.map (fun x -> x.Doc)
+      |> semiListL
+    | NewTuple values ->
+      values
+      |> List.map (fun x -> x.Doc)
+      |> tupleL
+    | NewUnionCase(name, fields) ->
+      let fields =
+        fields
+        |> List.map (fun x -> x.Doc)
+      if List.isEmpty fields || fields = [wordL "()"] then bracketL emptyL
+      else tupleL fields
     | Zero instance -> wordL instance ^^ wordL ".Zero()"
     | Return(instance, arg) -> wordL instance ^^ wordL ".Return" ^^ methodArgs [arg.Doc]
     | ReturnBang(instance, arg) -> wordL instance ^^ wordL ".ReturnFrom" ^^ methodArgs [arg.Doc]
@@ -105,6 +122,11 @@ module AnalysisResult =
   let bind f = function
   | Success v -> f v
   | Failure msgs -> Failure msgs
+
+  let sequence xs =
+    List.foldBack (fun x rs ->
+      bind (fun rs -> map (fun r -> r::rs) x) rs
+    ) xs (Success [])
 
 type AnalysisResultBuilder internal () =
   member inline __.Bind(x, f) = AnalysisResult.bind f x

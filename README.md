@@ -27,9 +27,9 @@ This tool can analysis your computation expressions.
   - [x] ``ce1; ce2``
   - [x] ``do! e;``
   - [x] ``e;``
-- [ ] Sequence expression like seq computation expression
+- [x] Sequence expression like seq computation expression
 - [ ] External function or method call
-- [ ] External libraries
+- [x] External libraries
 
 - Not support
   - ``match e with pi -> cei``

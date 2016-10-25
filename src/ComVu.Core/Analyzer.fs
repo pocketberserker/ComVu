@@ -1,5 +1,6 @@
 ﻿module ComVu.Analyzer
 
+open System
 open System.IO
 open Microsoft.FSharp.Compiler.SourceCodeServices
 
@@ -30,10 +31,26 @@ let rec private analysisBody instance = function
   |> Success
 | BasicPatterns.Value(memberOrFunctionOrValue) -> Success(Value memberOrFunctionOrValue.CompiledName)
 | BasicPatterns.NewObject(_, _, args) ->
-  List.foldBack (fun x rs ->
-    AnalysisResult.bind (fun rs -> analysisBody instance x |> AnalysisResult.map (fun r -> r::rs)) rs
-  ) args (Success [])
+  args
+  |> List.map (analysisBody instance)
+  |> AnalysisResult.sequence
   |> AnalysisResult.map NewObject
+| BasicPatterns.NewArray(_, values) ->
+  values
+  |> List.map (analysisBody instance)
+  |> AnalysisResult.sequence
+  |> AnalysisResult.map NewArray
+| BasicPatterns.NewTuple(_, values) ->
+  values
+  |> List.map (analysisBody instance)
+  |> AnalysisResult.sequence
+  |> AnalysisResult.map NewTuple
+| BasicPatterns.NewUnionCase(_, case, fields) ->
+  fields
+  |> List.map (analysisBody instance)
+  |> AnalysisResult.sequence
+  |> AnalysisResult.map (fun fields -> NewUnionCase(case.Name, fields))
+| BasicPatterns.Coerce(_, expr) -> analysisBody instance expr
 | BasicPatterns.Lambda(args, expr) ->
   analysisBody instance expr
   |> AnalysisResult.map (fun body -> Lambda(displayArgs args, body))
@@ -121,9 +138,9 @@ let rec private analysisBody instance = function
       | None -> Success None
       | Some r -> analysisBody instance r |> AnalysisResult.map Some
     let! args =
-      List.foldBack (fun x rs ->
-        AnalysisResult.bind (fun rs -> analysisBody instance x |> AnalysisResult.map (fun r -> r::rs)) rs
-      ) args (Success [])
+      args
+      |> List.map (analysisBody instance)
+      |> AnalysisResult.sequence
     return ExpressionCall(receiver, member'.DisplayName, args)
   }
 | BasicPatterns.Sequential(expr1, expr2) ->
@@ -167,8 +184,29 @@ let private analysisDeclarations decls =
     | _ -> Failure ["Last expression require `do computation-expression`."]
   | _ -> Failure ["ComVu allows one entity declaration."]
 
+let private seqBuilder = """open FSharp.Core.CompilerServices
+
+type SeqBuilder() =
+  member __.Yield(x) = Seq.singleton x
+  member __.YieldFrom(xs: _ seq) = xs
+  member __.Return(()) = Seq.empty
+  member __.Zero() = Seq.empty
+  member __.Combine(xs1, f) = Seq.append xs1 (f ())
+  member __.For(xs, g) = Seq.collect g xs
+  member __.While(guard, body) = RuntimeHelpers.EnumerateWhile guard (body ())
+  member __.TryFinally(xs, compensation) =
+    RuntimeHelpers.EnumerateThenFinally xs compensation
+  member __.Using(resource, xs) =
+    RuntimeHelpers.EnumerateUsing resource xs
+  member __.Delay(f) = f
+  member __.Run(f) = f ()
+
+let seq = SeqBuilder()
+"""
+
 let analysis input =
   async {
+    let input = sprintf "%s%s%s" seqBuilder Environment.NewLine input
     let file = Path.ChangeExtension(Path.GetTempFileName(), "fsx")
     File.WriteAllText(file, input)
     let! options = checker.GetProjectOptionsFromScript(file, input)
