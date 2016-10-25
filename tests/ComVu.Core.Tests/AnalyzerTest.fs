@@ -1,5 +1,6 @@
 ﻿module ComVu.Core.Tests.AnalyzerTest
 
+open System.IO
 open Persimmon
 open UseTestNameByReflection
 open ComVu
@@ -259,6 +260,46 @@ test {
   }
   (source, expected)
 
+let externalLibrary =
+  let rootDir = Path.Combine(__SOURCE_DIRECTORY__, "../..")
+  let dll =
+#if Debug
+    "Debug"
+#else
+    "Release"
+#endif
+    |> sprintf "tests/TestLibrary/bin/%s/TestLibrary.dll"
+  let loadDll =
+    Path.Combine(rootDir, dll)
+    |> sprintf "#r @\"%s\""
+  let source = loadDll + """
+
+open TestLibrary
+
+let test = TestBuilder()
+
+test {
+  let! x = 0
+  return x + 1
+}"""
+  let expected = {
+    Instance = "test"
+    Arg = "builder@"
+    Body =
+      LetBang(
+        "builder@",
+        Const "0",
+        Lambda(
+          "x",
+          Return(
+            "builder@",
+            ExpressionCall(None, "( + )", [Value "x"; Const "1"])
+          )
+        )
+      )
+  }
+  (source, expected)
+
 let ``analysis computation expression`` = parameterize {
   source [
     returnOnly
@@ -271,6 +312,7 @@ let ``analysis computation expression`` = parameterize {
     whileReturn
     forReturn
     quote
+    externalLibrary
   ]
   run (fun (source, expected) -> test {
     let! actual = asyncRun { it (Analyzer.analysis source) }

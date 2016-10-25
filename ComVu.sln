@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComVu", "src\ComVu\ComVu.cs
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ComVu.ViewModels", "src\ComVu.ViewModels\ComVu.ViewModels.fsproj", "{D787C350-428B-45E8-8AF4-87B6301204CC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{B8541666-DD2B-4D29-A0E3-27CC203C512E}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TestLibrary", "tests\TestLibrary\TestLibrary.fsproj", "{B68CB6BB-D625-4FAA-A07D-060C36E01793}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,8 +37,16 @@ Global
 		{D787C350-428B-45E8-8AF4-87B6301204CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D787C350-428B-45E8-8AF4-87B6301204CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D787C350-428B-45E8-8AF4-87B6301204CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B68CB6BB-D625-4FAA-A07D-060C36E01793}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B68CB6BB-D625-4FAA-A07D-060C36E01793}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B68CB6BB-D625-4FAA-A07D-060C36E01793}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B68CB6BB-D625-4FAA-A07D-060C36E01793}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{33F86BCD-0C2D-464B-980A-83ECC984C84D} = {B8541666-DD2B-4D29-A0E3-27CC203C512E}
+		{B68CB6BB-D625-4FAA-A07D-060C36E01793} = {B8541666-DD2B-4D29-A0E3-27CC203C512E}
 	EndGlobalSection
 EndGlobal

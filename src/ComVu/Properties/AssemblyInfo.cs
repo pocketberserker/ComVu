@@ -8,7 +8,10 @@ using System.Reflection;
 [assembly: AssemblyInformationalVersionAttribute("0.1.0")]
 namespace System {
     internal static class AssemblyVersionInformation {
-        internal const string Version = "0.1.0";
-        internal const string InformationalVersion = "0.1.0";
+        internal const System.String AssemblyTitle = "ComVu";
+        internal const System.String AssemblyProduct = "ComVu";
+        internal const System.String AssemblyVersion = "0.1.0";
+        internal const System.String AssemblyFileVersion = "0.1.0";
+        internal const System.String AssemblyInformationalVersion = "0.1.0";
     }
 }
