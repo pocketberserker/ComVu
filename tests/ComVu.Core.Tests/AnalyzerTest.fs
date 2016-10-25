@@ -344,6 +344,23 @@ test {
   }
   (source, expected)
 
+let defineSource =
+  let source = """type TestBuilder() =
+  member __.ReturnFrom(x) = x
+  member __.Source(x) = x
+
+let test = TestBuilder()
+
+test {
+  return! 0
+}"""
+  let expected = {
+    Instance = "test"
+    Arg = "builder@"
+    Body = ReturnBang("builder@", Source("builder@", Const "0"))
+  }
+  (source, expected)
+
 let quote =
   let source = """type TestBuilder() =
   member __.Quote() = ()
@@ -415,6 +432,7 @@ let ``analysis computation expression`` = parameterize {
     forReturn
     tryWith
     tryFinally
+    defineSource
     quote
     externalLibrary
   ]

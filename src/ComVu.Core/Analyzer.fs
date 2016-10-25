@@ -98,6 +98,9 @@ let rec private analysisBody instance = function
       let! lambda = analysisBody instance lambda
       return TryFinally(instance.CompiledName, src, lambda)
     }
+  | ("Source", [expr]) ->
+    analysisBody instance expr
+    |> AnalysisResult.map (fun value -> Source(instance.CompiledName, value))
   | ("Delay", [expr]) ->
     analysisBody instance expr
     |> AnalysisResult.map (fun value -> Delay(instance.CompiledName, value))

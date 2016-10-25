@@ -31,6 +31,7 @@ type ComputationExpressionBody =
   | TryFinally of string * ComputationExpressionBody * ComputationExpressionBody
   | Sequential of ComputationExpressionBody * ComputationExpressionBody
   | Quote of ComputationExpressionBody
+  | Source of string * ComputationExpressionBody
   | Delay of string * ComputationExpressionBody
   | Run of string * ComputationExpressionBody
 with
@@ -69,6 +70,7 @@ with
       wordL instance ^^ wordL ".TryFinally" ^^ methodArgs [src.Doc; expr.Doc]
     | Sequential(expr1, expr2) -> expr1.Doc ^^ wordL ";" @@ expr2.Doc
     | Quote(expr) -> wordL "<@" -- expr.Doc @@ wordL "@>"
+    | Source(instance, expr) -> wordL instance ^^ wordL ".Source" ^^ methodArgs [expr.Doc]
     | Delay(instance, expr) -> wordL instance ^^ wordL ".Delay" ^^ methodArgs [expr.Doc]
     | Run(instance, expr) -> wordL instance ^^ wordL ".Run" ^^ methodArgs [expr.Doc]
   override this.ToString() = print 2 this.Doc
