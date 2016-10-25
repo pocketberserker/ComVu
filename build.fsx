@@ -48,18 +48,15 @@ Target "AssemblyInfo" (fun _ ->
 
     [
       Attribute.Title "ComVu.Core"
+      Attribute.Guid "2e3bf328-3993-48c4-9437-d3d5662bd33a"
     ] @ common
     |> CreateFSharpAssemblyInfo "./src/ComVu.Core/AssemblyInfo.fs"
 
     [
       Attribute.Title "ComVu.ViewModels"
+      Attribute.Guid "d787c350-428b-45e8-8af4-87b6301204cc"
     ] @ common
     |> CreateFSharpAssemblyInfo "./src/ComVu.ViewModels/AssemblyInfo.fs"
-
-    [
-      Attribute.Title "ComVu"
-    ] @ common
-    |> CreateCSharpAssemblyInfo "./src/ComVu/Properties/AssemblyInfo.cs"
 )
 
 Target "CopyBinaries" (fun _ ->
