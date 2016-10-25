@@ -1,10 +1,14 @@
 # ComVu
 
 [![Build status](https://ci.appveyor.com/api/projects/status/n8hmjy24a5t96g4i/branch/master?svg=true)](https://ci.appveyor.com/project/pocketberserker/comvu/branch/master)
-[![NuGet Status](http://img.shields.io/nuget/v/ComVu.svg?style=flat)](https://www.nuget.org/packages/Persimmon.ComVu/)
 
 ComVu is a computation expressions visualyzer.
 This tool can analysis your computation expressions.
+
+## NuGet packages
+
+* WPF tool [![NuGet Status](http://img.shields.io/nuget/v/ComVu.svg?style=flat)](https://www.nuget.org/packages/ComVu/)
+* core library [![NuGet Status](http://img.shields.io/nuget/v/ComVu.Core.svg?style=flat)](https://www.nuget.org/packages/ComVu.Core/)
 
 ## Features
 
