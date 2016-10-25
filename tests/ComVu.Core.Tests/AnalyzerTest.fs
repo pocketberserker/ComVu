@@ -257,6 +257,51 @@ test {
   }
   (source, expected)
 
+let tryWith =
+  let source = """type TestBuilder() =
+  member __.Return(x) = x
+  member __.TryWith(x, g) =
+    try
+      x
+    with e ->
+      g e
+  member __.Delay(f) = f ()
+
+let test = TestBuilder()
+
+test {
+  try
+    return 0
+  with e ->
+    return 0
+}"""
+  let expected = {
+    Instance = "test"
+    Arg = "builder@"
+    Body =
+      Delay(
+        "builder@",
+        Lambda(
+          "()",
+          TryWith(
+            "builder@",
+            Delay(
+              "builder@",
+              Lambda("()", Return("builder@", Const "0"))
+            ),
+            Lambda(
+              "e",
+              Return(
+                "builder@",
+                Const "0"
+              )
+            )
+          )
+        )
+      )
+  }
+  (source, expected)
+
 let quote =
   let source = """type TestBuilder() =
   member __.Quote() = ()
@@ -326,6 +371,7 @@ let ``analysis computation expression`` = parameterize {
     useBang
     whileReturn
     forReturn
+    tryWith
     quote
     externalLibrary
   ]

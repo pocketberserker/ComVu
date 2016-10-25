@@ -27,6 +27,7 @@ type ComputationExpressionBody =
   | Use of string * ComputationExpressionBody * ComputationExpressionBody
   | While of string * ComputationExpressionBody * ComputationExpressionBody
   | For of string * ComputationExpressionBody * ComputationExpressionBody
+  | TryWith of string * ComputationExpressionBody * ComputationExpressionBody
   | Sequential of ComputationExpressionBody * ComputationExpressionBody
   | Quote of ComputationExpressionBody
   | Delay of string * ComputationExpressionBody
@@ -61,6 +62,8 @@ with
       wordL instance ^^ wordL ".While" ^^ methodArgs [cond.Doc; body.Doc]
     | For(instance, src, lambda) ->
       wordL instance ^^ wordL ".For" ^^ methodArgs [src.Doc; lambda.Doc]
+    | TryWith(instance, src, rescue) ->
+      wordL instance ^^ wordL ".TryWith" ^^ methodArgs [src.Doc; rescue.Doc]
     | Sequential(expr1, expr2) -> expr1.Doc ^^ wordL ";" @@ expr2.Doc
     | Quote(expr) -> wordL "<@" -- expr.Doc @@ wordL "@>"
     | Delay(instance, expr) -> wordL instance ^^ wordL ".Delay" ^^ methodArgs [expr.Doc]

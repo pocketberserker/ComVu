@@ -85,6 +85,13 @@ let rec private analysisBody instance = function
       let! lambda = optimizeBindLambdaArg lambda
       return For(instance.CompiledName, src, lambda)
     }
+  | ("TryWith", [src; lambda]) ->
+    result {
+      let! src = analysisBody instance src
+      let! lambda = analysisBody instance lambda
+      let! lambda = optimizeBindLambdaArg lambda
+      return TryWith(instance.CompiledName, src, lambda)
+    }
   | ("Delay", [expr]) ->
     analysisBody instance expr
     |> AnalysisResult.map (fun value -> Delay(instance.CompiledName, value))
