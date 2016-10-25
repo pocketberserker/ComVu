@@ -137,6 +137,30 @@ test {
   }
   (source, expected)
 
+let doReturn =
+  let source = """type TestBuilder() =
+  member __.Return(x) = x
+
+let test = TestBuilder()
+
+test {
+  do ()
+  return 0
+}"""
+  let expected = {
+    Instance = "test"
+    Arg = "builder@"
+    Body =
+      Sequential(
+        Const "()",
+        Return(
+          "builder@",
+          Const "0"
+        )
+      )
+  }
+  (source, expected)
+
 let disposable = """open System
 
 type Disposable() =
@@ -452,6 +476,7 @@ let ``analysis computation expression`` = parameterize {
     yieldBang
     letReturn
     letBang
+    doReturn
     useReturn
     useBang
     whileReturn

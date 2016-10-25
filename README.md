@@ -22,7 +22,7 @@ This tool can analysis your computation expressions.
   - [ ] ``if e then ce``
   - [ ] ``if e then ce1 else ce2``
   - [x] ``for x in e do ce``
-  - [ ] ``do e in ce``
+  - [x] ``do e in ce``
   - [x] ``do! e in ce``
   - [ ] ``ce1; ce2``
   - [x] ``do! e;``
