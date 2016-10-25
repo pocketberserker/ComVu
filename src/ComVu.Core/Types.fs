@@ -51,9 +51,11 @@ with
       if List.isEmpty args || args = ["()"] then bracketL emptyL
       else args |> List.map wordL |> tupleL
     | NewArray values ->
-      values
-      |> List.map (fun x -> x.Doc)
-      |> semiListL
+      let values =
+        values
+        |> List.map (fun x -> x.Doc)
+        |> semiListL
+      wordL "[|" ^^ values ^^ wordL "|]"
     | NewTuple values ->
       values
       |> List.map (fun x -> x.Doc)
@@ -62,6 +64,7 @@ with
       let fields =
         fields
         |> List.map (fun x -> x.Doc)
+      wordL name ^^
       if List.isEmpty fields || fields = [wordL "()"] then bracketL emptyL
       else tupleL fields
     | Zero instance -> wordL instance ^^ wordL ".Zero()"
