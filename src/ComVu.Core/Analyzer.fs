@@ -132,6 +132,13 @@ let rec private analysisBody instance = function
     let! expr2 = analysisBody instance expr2
     return Sequential(expr1, expr2)
   }
+| BasicPatterns.IfThenElse(cond, expr1, expr2) ->
+  result {
+    let! cond = analysisBody instance cond
+    let! expr1 = analysisBody instance expr1
+    let! expr2 = analysisBody instance expr2
+    return IfThenElse(cond, expr1, expr2)
+  }
 | BasicPatterns.Quote(expr) ->
   analysisBody instance expr |> AnalysisResult.map Quote
 | expr -> Failure [ sprintf "not supported: %A" expr ]

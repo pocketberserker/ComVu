@@ -19,8 +19,8 @@ This tool can analysis your computation expressions.
   - [x] ``while e do ce``
   - [x] ``try ce with pi -> cei``
   - [x] ``try ce finally e``
-  - [ ] ``if e then ce``
-  - [ ] ``if e then ce1 else ce2``
+  - [x] ``if e then ce``
+  - [x] ``if e then ce1 else ce2``
   - [x] ``for x in e do ce``
   - [x] ``do e in ce``
   - [x] ``do! e in ce``

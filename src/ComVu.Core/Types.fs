@@ -31,6 +31,7 @@ type ComputationExpressionBody =
   | TryFinally of string * ComputationExpressionBody * ComputationExpressionBody
   | Combine of string * ComputationExpressionBody * ComputationExpressionBody
   | Sequential of ComputationExpressionBody * ComputationExpressionBody
+  | IfThenElse of ComputationExpressionBody * ComputationExpressionBody * ComputationExpressionBody
   | Quote of ComputationExpressionBody
   | Source of string * ComputationExpressionBody
   | Delay of string * ComputationExpressionBody
@@ -72,6 +73,10 @@ with
     | Combine(instance, expr1, expr2) ->
       wordL instance ^^ wordL ".Combine" ^^ methodArgs [expr1.Doc; expr2.Doc]
     | Sequential(expr1, expr2) -> expr1.Doc ^^ wordL ";" @@ expr2.Doc
+    | IfThenElse(cond, expr1, expr2) ->
+      wordL "if" ^^ bracketL cond.Doc
+      @@ wordL "then" -- expr1.Doc
+      @@ wordL "else" -- expr2.Doc
     | Quote(expr) -> wordL "<@" -- expr.Doc @@ wordL "@>"
     | Source(instance, expr) -> wordL instance ^^ wordL ".Source" ^^ methodArgs [expr.Doc]
     | Delay(instance, expr) -> wordL instance ^^ wordL ".Delay" ^^ methodArgs [expr.Doc]

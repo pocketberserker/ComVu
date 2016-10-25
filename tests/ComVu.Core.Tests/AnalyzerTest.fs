@@ -429,6 +429,53 @@ test {
   }
   (source, expected)
 
+let ifThen =
+  let source = """type TestBuilder() =
+  member __.Return(x) = x
+  member __.Zero() = 0
+
+let test = TestBuilder()
+
+test {
+  if true then
+    return 1
+}"""
+  let expected = {
+    Instance = "test"
+    Arg = "builder@"
+    Body =
+      IfThenElse(
+        Const "True",
+        Return("builder@", Const "1"),
+        Zero "builder@"
+      )
+  }
+  (source, expected)
+
+let ifThenElse =
+  let source = """type TestBuilder() =
+  member __.Return(x) = x
+
+let test = TestBuilder()
+
+test {
+  if true then
+    return 0
+  else
+    return 1
+}"""
+  let expected = {
+    Instance = "test"
+    Arg = "builder@"
+    Body =
+      IfThenElse(
+        Const "True",
+        Return("builder@", Const "0"),
+        Return("builder@", Const "1")
+      )
+  }
+  (source, expected)
+
 let defineSource =
   let source = """type TestBuilder() =
   member __.ReturnFrom(x) = x
@@ -520,6 +567,8 @@ let ``analysis computation expression`` = parameterize {
     tryWith
     tryFinally
     sequential
+    ifThen
+    ifThenElse
     defineSource
     quote
     externalLibrary
