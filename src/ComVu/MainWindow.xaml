@@ -10,7 +10,14 @@
         <local:MainViewModel />
     </Window.DataContext>
     <DockPanel>
-        <Button Content="Analysis" Command="{Binding Analysis}" DockPanel.Dock="Bottom" />
+        <Grid DockPanel.Dock="Bottom">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="70*"/>
+                <ColumnDefinition Width="100*"/>
+            </Grid.ColumnDefinitions>
+            <Button Content="Analysis" Grid.Column="0" Command="{Binding Analysis}" />
+            <Button Content="Copy on Clipboard" Grid.Column="1" Command="{Binding CopyOnClipboard}" />
+        </Grid>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="70*"/>
