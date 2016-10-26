@@ -6,15 +6,15 @@ open System.Runtime.InteropServices
 [<assembly: AssemblyTitleAttribute("ComVu.ViewModels")>]
 [<assembly: GuidAttribute("d787c350-428b-45e8-8af4-87b6301204cc")>]
 [<assembly: AssemblyProductAttribute("ComVu")>]
-[<assembly: AssemblyVersionAttribute("0.1.0")>]
-[<assembly: AssemblyFileVersionAttribute("0.1.0")>]
-[<assembly: AssemblyInformationalVersionAttribute("0.1.0")>]
+[<assembly: AssemblyVersionAttribute("0.1.1")>]
+[<assembly: AssemblyFileVersionAttribute("0.1.1")>]
+[<assembly: AssemblyInformationalVersionAttribute("0.1.1")>]
 do ()
 
 module internal AssemblyVersionInformation =
     let [<Literal>] AssemblyTitle = "ComVu.ViewModels"
     let [<Literal>] Guid = "d787c350-428b-45e8-8af4-87b6301204cc"
     let [<Literal>] AssemblyProduct = "ComVu"
-    let [<Literal>] AssemblyVersion = "0.1.0"
-    let [<Literal>] AssemblyFileVersion = "0.1.0"
-    let [<Literal>] AssemblyInformationalVersion = "0.1.0"
+    let [<Literal>] AssemblyVersion = "0.1.1"
+    let [<Literal>] AssemblyFileVersion = "0.1.1"
+    let [<Literal>] AssemblyInformationalVersion = "0.1.1"
