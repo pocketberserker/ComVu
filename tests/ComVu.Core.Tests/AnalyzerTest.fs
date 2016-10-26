@@ -161,6 +161,35 @@ test {
   }
   (source, expected)
 
+let doBang =
+  let source = """type TestBuilder() =
+  member __.Return(x) = x
+  member __.Bind(x, f) = f x
+
+let test = TestBuilder()
+
+test {
+  do! ()
+  return 0
+}"""
+  let expected = {
+    Instance = "test"
+    Arg = "builder@"
+    Body =
+      LetBang(
+        "builder@",
+        Const "()",
+        Lambda(
+          "()",
+           Return(
+            "builder@",
+            Const "0"
+          )
+        )
+      )
+  }
+  (source, expected)
+
 let disposable = """open System
 
 type Disposable() =
@@ -269,6 +298,53 @@ test {
               Delay(
                 "builder@",
                 Lambda("()", Return("builder@", Const "0"))
+              )
+            )
+          )
+        )
+      )
+  }
+  (source, expected)
+
+let whileDoBang =
+  let source = """type TestBuilder() =
+  member __.While(cond, f) = if cond () then f () else Unchecked.defaultof<_>
+  member __.Return(x) = x
+  member __.Bind(x, f) = f x
+  member __.Delay(f) = f
+  member __.Run(f) = f ()
+
+let test = TestBuilder()
+
+test {
+  while true do
+    do! ()
+}"""
+  let expected = {
+    Instance = "test"
+    Arg = "builder@"
+    Body =
+      Run(
+        "builder@",
+        Delay(
+          "builder@",
+          Lambda(
+            "()",
+            While(
+              "builder@",
+              Lambda("()", Const "True"),
+              Delay(
+                "builder@",
+                Lambda(
+                  "()",
+                  LetBang(
+                    "builder@",
+                    Const "()",
+                    Lambda(
+                      "()",
+                      Return("builder@", Const "()"))
+                    )
+                  )
               )
             )
           )
@@ -560,9 +636,11 @@ let ``analysis computation expression`` = parameterize {
     letReturn
     letBang
     doReturn
+    doBang
     useReturn
     useBang
     whileReturn
+    whileDoBang
     forReturn
     tryWith
     tryFinally

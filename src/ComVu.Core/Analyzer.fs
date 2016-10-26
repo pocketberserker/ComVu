@@ -17,6 +17,7 @@ let private displayArgs (args: FSharpMemberOrFunctionOrValue) =
 
 let private optimizeBindLambdaArg = function
 | Lambda(_, Let(name, _, body)) -> Success(Lambda(name, body))
+| Lambda(_, body) -> Success(Lambda("()", body))
 | expr -> Failure ["failed to optimize Bind lambda term."; sprintf "%O" expr ]
 
 let rec private analysisBody instance = function
