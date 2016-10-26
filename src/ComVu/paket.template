@@ -18,4 +18,5 @@ files
     bin/Release/*.exe ==> tools
     bin/Release/*.config ==> tools
     bin/Release/*.dll ==> tools
+    bin/Release/*.xshd ==> tools
     !bin/Release/*.XML
