@@ -12,4 +12,4 @@ requireLicenseAcceptance
 tags
     F#, computation expressions
 description
-    Computation Expression Analyzer.
+    Computation Expression Visualizer(Core).

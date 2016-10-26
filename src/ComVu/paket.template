@@ -13,7 +13,7 @@ requireLicenseAcceptance
 tags
     F#, computation expressions
 description
-    Computation Expression Analyzer.
+    Computation Expression Visualizer(WPF).
 files
     bin/Release/*.exe ==> tools
     bin/Release/*.config ==> tools
