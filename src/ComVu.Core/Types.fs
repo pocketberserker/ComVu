@@ -7,7 +7,7 @@ open YC.PrettyPrinter.StructuredFormat
 [<AutoOpen>]
 module private FormatHelper =
 
-  let bracketL l = wordL "(" -- l @@ wordL ")"
+  let bracketL l = wordL "(" -- l -- wordL ")"
 
   let methodArgs xs = bracketL (sepListL (wordL ",") xs)
 
@@ -64,43 +64,44 @@ with
       let fields =
         fields
         |> List.map (fun x -> x.Doc)
-      wordL name ^^
+      wordL name >|<
       if List.isEmpty fields || fields = [wordL "()"] then bracketL emptyL
       else tupleL fields
-    | Zero instance -> wordL instance ^^ wordL ".Zero()"
-    | Return(instance, arg) -> wordL instance ^^ wordL ".Return" ^^ methodArgs [arg.Doc]
-    | ReturnBang(instance, arg) -> wordL instance ^^ wordL ".ReturnFrom" ^^ methodArgs [arg.Doc]
-    | Yield(instance, arg) -> wordL instance ^^ wordL ".Yield" ^^ methodArgs [arg.Doc]
-    | YieldBang(instance, arg) -> wordL instance ^^ wordL ".YieldFrom" ^^ methodArgs [arg.Doc]
-    | Lambda(arg, body) -> wordL "fun" ^^ wordL arg ^^ wordL "->" -- body.Doc
+    | Zero instance -> wordL instance >|< wordL ".Zero()"
+    | Return(instance, arg) -> wordL instance >|< wordL ".Return" >|< methodArgs [arg.Doc]
+    | ReturnBang(instance, arg) -> wordL instance >|< wordL ".ReturnFrom" >|< methodArgs [arg.Doc]
+    | Yield(instance, arg) -> wordL instance >|< wordL ".Yield" >|< methodArgs [arg.Doc]
+    | YieldBang(instance, arg) -> wordL instance >|< wordL ".YieldFrom" >|< methodArgs [arg.Doc]
+    | Lambda(arg, body) -> wordL "fun" ^^ wordL arg ^^ wordL "->" @@-- body.Doc
     | Let(name, value, body) -> wordL "let" ^^ wordL name ^^ wordL "=" ^^ value.Doc @@ body.Doc
     | ExpressionCall(receiver, name, args) ->
       let receiver = match receiver with | Some x -> x.ToString() + "." |> wordL | None -> emptyL
       let args = args |> List.map objL |> methodArgs
-      receiver ^^ wordL name ^^ args
+      receiver >|< wordL name >|< args
     | LetBang(instance, src, lambda) ->
-      wordL instance ^^ wordL ".Bind" ^^ methodArgs [src.Doc; lambda.Doc]
+      wordL instance >|< wordL ".Bind" >|< methodArgs [src.Doc; lambda.Doc]
     | Use(instance, src, lambda) ->
-      wordL instance ^^ wordL ".Using" ^^ methodArgs [src.Doc; lambda.Doc]
+      wordL instance >|< wordL ".Using" >|< methodArgs [src.Doc; lambda.Doc]
     | While(instance, cond, body) ->
-      wordL instance ^^ wordL ".While" ^^ methodArgs [cond.Doc; body.Doc]
+      wordL instance >|< wordL ".While" >|< methodArgs [bracketL cond.Doc; body.Doc]
     | For(instance, src, lambda) ->
-      wordL instance ^^ wordL ".For" ^^ methodArgs [src.Doc; lambda.Doc]
+      wordL instance >|< wordL ".For" >|< methodArgs [src.Doc; lambda.Doc]
     | TryWith(instance, src, rescue) ->
-      wordL instance ^^ wordL ".TryWith" ^^ methodArgs [src.Doc; rescue.Doc]
+      wordL instance >|< wordL ".TryWith" >|< methodArgs [src.Doc; rescue.Doc]
     | TryFinally(instance, src, expr) ->
-      wordL instance ^^ wordL ".TryFinally" ^^ methodArgs [src.Doc; expr.Doc]
+      wordL instance >|< wordL ".TryFinally" >|< methodArgs [src.Doc; expr.Doc]
     | Combine(instance, expr1, expr2) ->
-      wordL instance ^^ wordL ".Combine" ^^ methodArgs [expr1.Doc; expr2.Doc]
-    | Sequential(expr1, expr2) -> expr1.Doc ^^ wordL ";" @@ expr2.Doc
+      wordL instance >|< wordL ".Combine" >|< methodArgs [expr1.Doc; expr2.Doc]
+    | Sequential(expr1, expr2) -> expr1.Doc >|< wordL ";" @@ expr2.Doc
     | IfThenElse(cond, expr1, expr2) ->
-      wordL "if" ^^ bracketL cond.Doc
-      @@ wordL "then" -- expr1.Doc
-      @@ wordL "else" -- expr2.Doc
-    | Quote(expr) -> wordL "<@" -- expr.Doc @@ wordL "@>"
-    | Source(instance, expr) -> wordL instance ^^ wordL ".Source" ^^ methodArgs [expr.Doc]
-    | Delay(instance, expr) -> wordL instance ^^ wordL ".Delay" ^^ methodArgs [expr.Doc]
-    | Run(instance, expr) -> wordL instance ^^ wordL ".Run" ^^ methodArgs [expr.Doc]
+      let ifBlock = wordL "if" ^^ cond.Doc
+      let thenBlock = wordL "then" @@-- expr1.Doc
+      let elseBlock = wordL "else" @@-- expr2.Doc
+      ifBlock @@ thenBlock @@ elseBlock
+    | Quote(expr) -> wordL "<@" @@-- expr.Doc @@ wordL "@>"
+    | Source(instance, expr) -> wordL instance >|< wordL ".Source" >|< methodArgs [expr.Doc]
+    | Delay(instance, expr) -> wordL instance >|< wordL ".Delay" >|< methodArgs [expr.Doc]
+    | Run(instance, expr) -> wordL instance >|< wordL ".Run" >|< methodArgs [expr.Doc]
   override this.ToString() = print 2 this.Doc
 
 type ComputationExpression = {
@@ -109,7 +110,7 @@ type ComputationExpression = {
   Body: ComputationExpressionBody
 }
 with
-  member this.Doc = wordL "(fun" ^^ wordL this.Arg ^^ wordL "->" -- this.Body.Doc @@ wordL ")" ^^ wordL this.Instance
+  member this.Doc = wordL "(fun" ^^ wordL this.Arg ^^ wordL "->" @@-- this.Body.Doc @@ wordL ")" ^^ wordL this.Instance
   override this.ToString() = print 2 this.Doc
 
 type AnalysisResult<'T> =
