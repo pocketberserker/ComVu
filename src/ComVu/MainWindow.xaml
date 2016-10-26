@@ -30,7 +30,7 @@
                     <control:AvalonEditBehavior Text="{Binding Code.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 </i:Interaction.Behaviors>
             </avalon:TextEditor>
-            <TextBlock Name="Output" Grid.Row="0" Grid.Column="2" Text="{Binding Output.Value}" />
+            <TextBlock Name="Output" Grid.Row="0" Grid.Column="2" Text="{Binding Output.Value}" FontFamily="Consolas" />
         </Grid>
     </DockPanel>
 </Window>
