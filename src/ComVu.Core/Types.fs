@@ -11,6 +11,9 @@ module private FormatHelper =
 
   let methodArgs xs = bracketL (sepListL (wordL ",") xs)
 
+  let docToStr doc =
+    print 10 doc
+
 type ComputationExpressionBody =
   | Const of string
   | Value of string
@@ -102,7 +105,7 @@ with
     | Source(instance, expr) -> wordL instance >|< wordL ".Source" >|< methodArgs [expr.Doc]
     | Delay(instance, expr) -> wordL instance >|< wordL ".Delay" >|< methodArgs [expr.Doc]
     | Run(instance, expr) -> wordL instance >|< wordL ".Run" >|< methodArgs [expr.Doc]
-  override this.ToString() = print 2 this.Doc
+  override this.ToString() = docToStr this.Doc
 
 type ComputationExpression = {
   Instance: string
@@ -111,7 +114,7 @@ type ComputationExpression = {
 }
 with
   member this.Doc = wordL "(fun" ^^ wordL this.Arg ^^ wordL "->" @@-- this.Body.Doc @@ wordL ")" ^^ wordL this.Instance
-  override this.ToString() = print 2 this.Doc
+  override this.ToString() = docToStr this.Doc
 
 type AnalysisResult<'T> =
   | Success of 'T
