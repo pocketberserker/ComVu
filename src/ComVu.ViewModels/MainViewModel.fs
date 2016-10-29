@@ -17,7 +17,7 @@ type MainViewModel() =
     analysis
       .Subscribe(fun _ ->
         output.Value <-
-          match Analyzer.analysis code.Value |> Async.RunSynchronously with
+          match Analyzer.analyze code.Value |> Async.RunSynchronously with
           | Success v ->v.ToString()
           | Failure msgs -> msgs |> String.concat Environment.NewLine
       )

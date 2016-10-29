@@ -170,7 +170,7 @@ let ``analysis seq computation expression(sequence expression like)`` = paramete
     forYield
   ]
   run (fun (source, expected) -> test {
-    let! actual = asyncRun { it (Analyzer.analysis source) }
+    let! actual = asyncRun { it (Analyzer.analyze source) }
     do! assertEquals (Success expected) actual
   })
 } 
