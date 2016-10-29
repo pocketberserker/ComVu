@@ -131,7 +131,14 @@ let rec private analysisBody instance = function
   | ("Run", [expr]) ->
     analysisBody instance expr
     |> AnalysisResult.map (fun value -> Run(instance.CompiledName, value))
-  | _ -> Failure [ sprintf "not supported: %s" member'.CompiledName ]
+  | _ ->
+    result {
+      let! args =
+        exprs
+        |> List.map (analysisBody instance)
+        |> AnalysisResult.sequence
+      return ExpressionCall(Some (Value instance.CompiledName), member'.CompiledName, args)
+    }
 | BasicPatterns.Call(receiver, member', _, _, args) ->
   result {
     let! receiver =

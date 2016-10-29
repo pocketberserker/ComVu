@@ -626,6 +626,24 @@ test {
   }
   (source, expected)
 
+let customOperator =
+  let source = """type TestBuilder() =
+  member __.Yield(()) = ()
+  [<CustomOperation("test")>]
+  member __.Test(()) = ()
+
+let test = TestBuilder()
+
+test {
+  test
+}"""
+  let expected = {
+    Instance = "test"
+    Arg = "builder@"
+    Body = ExpressionCall(Some (Value "builder@"), "Test", [Yield("builder@", Const "()")])
+  }
+  (source, expected)
+
 let ``analysis computation expression`` = parameterize {
   source [
     zeroOnly
@@ -650,6 +668,7 @@ let ``analysis computation expression`` = parameterize {
     defineSource
     quote
     externalLibrary
+    customOperator
   ]
   run (fun (source, expected) -> test {
     let! actual = asyncRun { it (Analyzer.analysis source) }
