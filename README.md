@@ -32,12 +32,14 @@ This tool can analysis your computation expressions.
   - [x] ``ce1; ce2``
   - [x] ``do! e;``
   - [x] ``e;``
+  - [ ] ``joinOp``
+  - [ ] ``groupJoinOp``
+  - [ ] `onWord`
+  - [x] Custom operator
 - [x] Sequence expression like seq computation expression
 - [ ] External function or method call
 - [x] External libraries
 
 - Not support
   - ``match e with pi -> cei``
-  - Custom operator
-  - ``joinOp``, ``groupJoinOp``
 
