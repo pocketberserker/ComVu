@@ -12,7 +12,7 @@ module private FormatHelper =
   let methodArgs xs = bracketL (sepListL (wordL ",") xs)
 
   let docToStr doc =
-    print 10 doc
+    print 20 doc
 
 type ComputationExpressionBody =
   | Const of string
@@ -113,7 +113,11 @@ type ComputationExpression = {
   Body: ComputationExpressionBody
 }
 with
-  member this.Doc = wordL "(fun" ^^ wordL this.Arg ^^ wordL "->" @@-- this.Body.Doc @@ wordL ")" ^^ wordL this.Instance
+  member this.Doc =
+    let body = wordL "fun" ^^ wordL this.Arg ^^ wordL "->" @@-- this.Body.Doc
+    wordL "("
+    >|< body
+    @@ wordL ")" ^^ wordL this.Instance
   override this.ToString() = docToStr this.Doc
 
 type AnalysisResult<'T> =
