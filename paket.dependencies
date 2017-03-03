@@ -2,7 +2,6 @@ source https://api.nuget.org/v3/index.json
 
 nuget FSharp.Core ~> 4.0.0.1
 nuget ReactiveProperty
-nuget Rx-PlatformServices = 2.2.5
 nuget AvalonEdit
 nuget FSharp.Compiler.Service ~> 8.0
 nuget YC.PrettyPrinter ~> 0.0.5
